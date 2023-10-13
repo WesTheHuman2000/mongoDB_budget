@@ -146,9 +146,9 @@
             datasets: [{
                 data: [30, 350, 90],
                 backgroundColor: [
-                'rgba(255, 99, 132, 0.2)',
-                'rgba(54, 162, 235, 0.2)',
-                'rgba(255, 206, 86, 0.2)',
+                '#9b5fe0',
+                
+                
     ],
         }],
         
@@ -167,27 +167,74 @@
                 data: dataSource
             });
         };
-
+/*
         function getBudget(){
             axios.get('/budget')
             .then(function(res){
                 console.log(res.data);
-                const budgetData = res.data.budget.myBudget;
 
-                for(var i =0; i<budgetData.length; i++){
-                    
-                    dataSource.datasets[0].data[i]=budgetData[i].budget;
-                    dataSource.labels[i] = budgetData[i].title
-                }
+            
+                const budgetData = res.data;
+
+            const titles = [];
+            const budgets = [];
+
+            // Iterate over budgetData and extract title and budget
+            for (const item of budgetData) {
+                titles.push(item.title);
+                budgets.push(item.budget);
+            }
+            // Update the data source
+            dataSource.labels = titles;
+            dataSource.datasets[0].data = budgets;
                 
                 createChart();
                 
             });
         };
+        */
+        function getBudget() {
+        axios.get('/budget')
+        .then(function (res) {
+            console.log('res.data is '+ res.data);
+
+            // Check if the response data is an array
+            if (Array.isArray(res.data)) {
+                // Assuming the response is an array of budget items
+                const budgetData = res.data;
+
+                // Initialize empty arrays for titles and budgets
+                const titles = [];
+                const budgets = [];
+                const colors = [];
+
+                // Iterate over budgetData and extract title and budget
+                for (const item of budgetData) {
+                    titles.push(item.title);
+                    budgets.push(item.budget);
+                    colors.push(item.color);
+                }
+
+                // Update the data source
+                dataSource.labels = titles;
+                dataSource.datasets[0].data = budgets;
+                dataSource.datasets[0].backgroundColor =colors;
+
+                // Re-render the chart
+                createChart();
+            } else {
+                console.error("Response data is not an array.");
+            }
+        })
+        .catch(function (error) {
+            console.error("Error fetching budget data: " + error);
+        });
+}
+
         getBudget();
 
         function transformBudgetData(data) {
-            return data.budget.myBudget.map(item => ({
+            return data.map(item => ({
                 label: item.title,
                 value: item.budget
             }));
@@ -228,8 +275,10 @@ svg.attr("transform", "translate(" + width / 2 + "," + height / 2 + ")");
 
 var key = function(d){ return d.data.label; };
 
+
+
 var color = d3.scale.ordinal()
-	.domain(["Lorem ipsum", "dolor sit", "amet", "consectetur", "adipisicing", "elit", "sed", "do", "eiusmod", "tempor", "incididunt"])
+	.domain(data.map(item => item.label))
 	.range(["#98abc5", "#8a89a6", "#7b6888", "#6b486b", "#a05d56", "#d0743c", "#ff8c00"]);
 
 
@@ -332,7 +381,7 @@ function change(data) {
 function getBudgetDataAndInitializeChart() {
             axios.get('/budget')
                 .then(function (res) {
-                    console.log(res.data);
+                   // console.log(res.data);
                     const budgetData = transformBudgetData(res.data)
 
                     
