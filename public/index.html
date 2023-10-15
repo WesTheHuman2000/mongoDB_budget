@@ -194,6 +194,7 @@
         };
         */
         function getBudget() {
+       // axios.post('/add-budget');
         axios.get('/budget')
         .then(function (res) {
             console.log('res.data is '+ res.data);
@@ -236,7 +237,8 @@
         function transformBudgetData(data) {
             return data.map(item => ({
                 label: item.title,
-                value: item.budget
+                value: item.budget,
+                color: item.color
             }));
         }
  
@@ -279,7 +281,7 @@ var key = function(d){ return d.data.label; };
 
 var color = d3.scale.ordinal()
 	.domain(data.map(item => item.label))
-	.range(["#98abc5", "#8a89a6", "#7b6888", "#6b486b", "#a05d56", "#d0743c", "#ff8c00"]);
+	.range(data.map(item => item.color));;
 
 
 

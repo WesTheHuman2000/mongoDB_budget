@@ -13,27 +13,35 @@ mongoose.connect(url)
 
             budgetsModel.find({})
             .then((data)=>{
-              //  console.log(data)
-              //  mongoose.connection.close()
             })
             .catch((connectionError)=>{
                 console.log(connectionError)
             })
-/*
-            app.get('/budget', (req, res) => {
-                budgetsModel.find({})
-                  .then((data) => {
-                    
-                    const budgetData = data.map(item => ({
-                         title: item.title, 
-                         budget: item.budget 
-                        }));
-                    res.json({ budget: budgetData});
-                    
-                  })
-                  .catch((error) => {
-                    res.status(500).json({ error: 'Internal Server Error' });
-                  });
+
+
+            app.post('/add-budget', (req, res)=>{
+              const newData = {
+                title: 'New Title',
+                budget: 100,
+                color: '#ff0000',
+              };
+              budgetsModel.insertMany([newData])
+              .then((data)=>{
+                console.log('added data correctly');
+                console.log(data);
+              }).catch((error)=>{
+                console.error('error adding data', error)
+              });
+            });
+            /*
+            budgetsModel.insertMany({title:'test title postman', budget:50, color: '#cc3300'})
+                      .then((data)=>{
+                          console.log(data)
+                          console.log('Added data correctly')
+                          
+                      })
+                      .catch((connectionError)=>{
+                          console.log(connectionError)
               });
               */
               app.get('/budget', (req, res) => {
@@ -50,17 +58,7 @@ mongoose.connect(url)
                     res.status(500).json({ error: 'Internal Server Error' });
                   });
               });
-/*
-            budgetsModel.find({})
-                        .then((data)=>{
-                            console.log(data)
-                            mongoose.connection.close()
-                        })
-                        .catch((connectionError)=>{
-                            console.log(connectionError)
-                        })
-            
-*/
+
             app.use('/', express.static('public'));
             const port = 3000;
             app.listen(port, () =>{
