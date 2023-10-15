@@ -128,6 +128,7 @@
                 </p>
             </section>
 
+
         </div>
 
     </article>
@@ -167,34 +168,8 @@
                 data: dataSource
             });
         };
-/*
-        function getBudget(){
-            axios.get('/budget')
-            .then(function(res){
-                console.log(res.data);
 
-            
-                const budgetData = res.data;
-
-            const titles = [];
-            const budgets = [];
-
-            // Iterate over budgetData and extract title and budget
-            for (const item of budgetData) {
-                titles.push(item.title);
-                budgets.push(item.budget);
-            }
-            // Update the data source
-            dataSource.labels = titles;
-            dataSource.datasets[0].data = budgets;
-                
-                createChart();
-                
-            });
-        };
-        */
         function getBudget() {
-       // axios.post('/add-budget');
         axios.get('/budget')
         .then(function (res) {
             console.log('res.data is '+ res.data);

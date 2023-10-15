@@ -2,7 +2,7 @@ const express = require('express');
 const mongoose = require('mongoose');
 
 const app = express();
-
+app.use(express.json());
 const budgetsModel = require('./models/budget_info_schema')
 
 let url = 'mongodb://127.0.0.1:27017/mongodb_demo';
@@ -20,30 +20,26 @@ mongoose.connect(url)
 
 
             app.post('/add-budget', (req, res)=>{
+
+             // const { title, budget, color } = req.body;
+              
               const newData = {
-                title: 'New Title',
-                budget: 100,
-                color: '#ff0000',
+                title: req.body.title,
+                budget: req.body.budget,
+                color: req.body.color,
               };
               budgetsModel.insertMany([newData])
               .then((data)=>{
                 console.log('added data correctly');
                 console.log(data);
+                res.status(200).json({ message: 'Data added successfully' });
+                mongoose.connection.close();
               }).catch((error)=>{
                 console.error('error adding data', error)
+                res.status(500).json({ error: 'Internal Server Error' });
               });
             });
-            /*
-            budgetsModel.insertMany({title:'test title postman', budget:50, color: '#cc3300'})
-                      .then((data)=>{
-                          console.log(data)
-                          console.log('Added data correctly')
-                          
-                      })
-                      .catch((connectionError)=>{
-                          console.log(connectionError)
-              });
-              */
+            
               app.get('/budget', (req, res) => {
                 budgetsModel.find({})
                   .then((data) => {
@@ -53,6 +49,7 @@ mongoose.connect(url)
                       color: item.color
                     }));
                     res.json( budgetData );
+
                   })
                   .catch((error) => {
                     res.status(500).json({ error: 'Internal Server Error' });
@@ -67,4 +64,5 @@ mongoose.connect(url)
         })
         .catch((connectionError)=>{
             console.log(connectionError)
+            console.error('Error connecting to the database:', connectionError);
         })
